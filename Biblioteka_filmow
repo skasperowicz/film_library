@@ -1,0 +1,125 @@
+import random
+from datetime import date
+class Film:
+    def __init__(self, title, release_year, genre):
+        self.title = title
+        self.release_year = release_year
+        self.genre = genre
+        self.vievs = 0    
+    
+    def __str__(self):
+        return f"Tytuł: {self.title} ({self.release_year}) Wyświetlenia: {self.vievs}"
+    def __repr__(self):
+        return f"Tytuł: {self.title} ({self.release_year}) Wyświetlenia: {self.vievs}"
+    
+    def play(self, step=1):
+        self.vievs += step
+        
+class Serial(Film):
+    def __init__(self, episode, season, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.episode = episode
+        self.season = season
+    def __str__(self):
+        return f"{self.title} S{"%02d" %self.season}E{"%02d" %self.episode} Wyświetlenia: {self.vievs}"
+    def __repr__(self):
+        return f"{self.title} S{"%02d" %self.season}E{"%02d" %self.episode} Wyświetlenia: {self.vievs}"
+    @property
+    def episodes_number(self):
+        episodes_number = 0
+        for i in library:
+            if i.title == self.title:
+                episodes_number += 1
+        print(episodes_number)
+    
+   
+
+film1 = Film(title = "Władca Pierścieni - Drużyna Pierścienia", release_year = "2001", genre = "fantasy")
+film2 = Film(title = "Władca Pierścieni - Dwie Wieże", release_year = "2002", genre = "fantasy",)
+film3 = Film(title = "Władca Pierścieni - Powrót Króla", release_year = "2003", genre = "fantasy",)
+film4 = Film(title = "Hobbit - Niezwykła podróż", release_year = "2012", genre = "fantasy",)
+film5 = Film(title = "Hobbit - Pustkowie Smauga", release_year = "2013", genre = "fantasy",)
+film6 = Film(title = "Hobbit - Bitwa Pięciu Armii", release_year = "2014", genre = "fantasy",)
+
+serial1 = Serial(title = "Przyjaciele", release_year = "1994", genre = "komedia", episode = 1, season = 1,)
+serial2 = Serial(title = "Przyjaciele", release_year = "1994", genre = "komedia", episode = 2, season = 1,)
+serial3 = Serial(title = "Przyjaciele", release_year = "1994", genre = "komedia", episode = 3, season = 1,)
+serial4 = Serial(title = "Przyjaciele", release_year = "1994", genre = "komedia", episode = 4, season = 1,)
+serial5 = Serial(title = "Przyjaciele", release_year = "1994", genre = "komedia", episode = 5, season = 1,)
+serial6 = Serial(title = "Jak poznałem Waszą Matkę", release_year = "1994", genre = "komedia", episode = 15, season = 1,)
+
+library = [film1, film2, film3, film4, film5, film6, serial1, serial2, serial3, serial4, serial5, serial6,]
+
+def get_movies(list):
+    gm_new_list = []
+    for i in list:
+        if isinstance(i, Film) == True and isinstance(i, Serial) == False:
+            gm_new_list.append(i)
+    gm_sorted_list = sorted(gm_new_list, key=lambda i: i.title)
+    return gm_sorted_list
+    
+     
+def get_series(list):
+    gs_new_list = []
+    for i in list:
+        if isinstance(i, Serial) == True:
+            gs_new_list.append(i)
+    gs_sorted_list = sorted(gs_new_list, key=lambda i: i.title)
+    return gs_sorted_list
+
+def search(title, list):
+    for i in list:
+        if title == i.title:
+            print(i)
+
+def generate_vievs(list):
+    random_film = random.choice(list)
+    random_film.play(random.randint(1,100))
+    return random_film, random_film.vievs
+
+def ten_times_vievs(list):
+    tt_generated_list=[]
+    for i in range (1,11):
+        gen_vievs = generate_vievs(list)
+        tt_generated_list.append(gen_vievs)
+    
+    
+def top_titles(content_type, amount_of_titles, list):
+    if content_type == "Film":
+        movie_list = get_movies(list)
+        sorted_list = sorted(movie_list, key = lambda movie: movie.vievs)
+        top_list = []
+        y = -1
+        while amount_of_titles > 0:
+            top_list.append(sorted_list[y])
+            amount_of_titles = amount_of_titles-1
+            y = y-1
+        
+        return top_list
+    if content_type == "Serial":
+        movie_list = get_series(list)
+        sorted_list = sorted(movie_list, key = lambda i: i.vievs)
+        top_list = []
+        y = -1
+        while amount_of_titles > 0:
+            top_list.append(sorted_list[y])
+            amount_of_titles = amount_of_titles-1
+            y = y-1
+      
+        return top_list
+
+
+def season_maker(title, release_year, genre, season, episodes):
+    serial_list = []
+    for i in range (0, episodes):
+        serial = Serial(title = title, release_year = release_year, genre = genre, episode = i+1, season = season)
+        serial_list.append(serial)
+    return serial_list
+
+print("Biblioteka filmów")
+library = library + season_maker("Gra o Tron", "2018", "fantasy", 9, 30)
+ten_times_vievs(library)
+today = date.today()
+print(f"Najpopularniejsze filmy i seriale dnia {today.strftime("%d.%m.%Y")}")
+top_list = top_titles("Serial",3, library) + top_titles("Film",3, library)
+print(top_list[0], top_list[1], top_list[2])
